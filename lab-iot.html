@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lab IoT & Elektronika</title>
+    <!-- Kabel penghubung ke desain tema gelap elegan -->
+    <link rel="stylesheet" href="style.css"> 
+  </head>
+  <body>
+    
+    <!-- BAGIAN HEADER (Menu Navigasi) -->
+    <header class="bagian-header">
+      <div class="logo">Jejak Langkah & Logika</div>
+      <nav class="navigasi">
+        <a href="index.html">Beranda</a>
+        <a href="proyek.html">Proyek & Instalasi</a>
+        <a href="lab-iot.html">Elektronika & IoT</a>
+        <a href="puisi.html">Catatan & Puisi</a>
+      </nav>
+    </header>
+
+    <!-- BAGIAN KONTEN UTAMA LAB IOT -->
+    <div style="padding: 50px 20px; color: #f8fafc; text-align: center;">
+      <h2 style="color: #38bdf8;">Lab IoT & Rekayasa Elektronika</h2>
+      
+      <!-- Kotak Utama Pembungkus Proyek -->
+      <div class="kotak-hobi" style="width: 100%; max-width: 800px; margin: 0 auto; text-align: left;">
+        <p style="color: #cbd5e1;">Halaman ini berisi dokumentasi proyek Internet of Things (IoT) dan sistem otomasi yang saya kembangkan untuk memberikan solusi praktis pada permasalahan sehari-hari.</p>
+        
+        <hr style="border-color: #334155; margin: 30px 0;">
+
+        <!-- PROYEK 1: TANDON AIR -->
+        <h3 style="color: #f59e0b;">Smart Monitoring Tandon Air (Ultrasonik & ESP8266)</h3>
+        <p>Perancangan sistem cerdas untuk memantau kapasitas volume air pada tandon rumah secara <i>real-time</i>. Sistem ini menggunakan sensor ultrasonik untuk membaca jarak permukaan air, yang datanya kemudian diproses secara nirkabel oleh mikrokontroler NodeMCU ESP8266.</p>
+        
+        <p>Agar lebih praktis, sistem ini saya integrasikan dengan antarmuka <b>Blynk</b>. Sebagai fitur pengaman tambahan (<i>fail-safe</i>), saya memprogram logika peringatan menggunakan bot <b>Telegram</b>. Ketika volume air menyentuh batas minimum kritis, sistem akan otomatis mengirimkan pesan notifikasi ke Telegram sehingga pemantauan di rumah bisa dilakukan dengan mudah, dan pompa dapat dinyalakan tepat waktu.</p>
+        
+        <ul>
+          <li><strong>Komponen Inti:</strong> NodeMCU ESP8266, Sensor Jarak Ultrasonik (HC-SR04 / JSN-SR04T).</li>
+          <li><strong>Platform & Komunikasi:</strong> Aplikasi Blynk (Dashboard) & API Telegram Bot.</li>
+        </ul>
+
+        <!-- Tampilan Potongan Kode Logika Utama -->
+        <h4 style="color: #38bdf8; margin-top: 20px;">Logika Utama (Notifikasi Telegram & Blynk):</h4>
+        <div style="background-color: #0f172a; padding: 15px; border-radius: 8px; max-height: 300px; overflow-y: auto; overflow-x: auto; border: 1px solid #334155;">
+<pre style="margin: 0; color: #a5b4fc; font-family: 'Courier New', Courier, monospace;"><code>// Fungsi membaca jarak ultrasonik dan mengirim peringatan
+void cekTandon() {
+  // Membaca jarak dari sensor
+  digitalWrite(TRIGGER_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIGGER_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIGGER_PIN, LOW);
+  
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  float distance = (duration * 0.034) / 2;
+  
+  // Mengirim data ke aplikasi Blynk (misal di Virtual Pin V1)
+  Blynk.virtualWrite(V1, distance);
+  
+  // Logika Notifikasi Telegram jika air hampir habis (jarak > 80cm)
+  if (distance > 80.0 && !pesanTerkirim) {
+    String pesan = "⚠️ Peringatan: Air di tandon hampir habis! Jarak: " + String(distance) + " cm. Segera nyalakan pompa.";
+    bot.sendMessage(CHAT_ID, pesan, "");
+    pesanTerkirim = true; // Flag agar tidak spam pesan berulang
+  } else if (distance < 50.0) {
+    pesanTerkirim = false; // Reset status saat air sudah kembali terisi
+  }
+}</code></pre>
+        </div>
+
+        <!-- Area Tombol Download (Fritzing & Source Code) -->
+        <h4 style="color: #38bdf8; margin-top: 30px;">Unduh File Proyek:</h4>
+        <p style="font-size: 14px; color: #cbd5e1;">Silakan unduh skema rangkaian dan kode program lengkapnya di bawah ini untuk Anda pelajari atau modifikasi.</p>
+        
+        <!-- Tombol Berjajar ke Samping -->
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px;">
+          <!-- Pastikan nama 'skema-tandon.fzz' sama dengan file Anda -->
+          <a href="skema.fzz" download class="tombol-aksi" style="background-color: #10b981; text-decoration: none; display: inline-block; margin-top: 0;">
+            Unduh Skema (.fzz)
+          </a>
+          
+          <!-- Pastikan nama 'Tandon_Blynk_Tele.ino' sama dengan file Anda -->
+          <a href="Monitoring_tandon_telegram.ino" download class="tombol-aksi" style="background-color: #3b82f6; text-decoration: none; display: inline-block; margin-top: 0;">
+            Unduh Kode (.ino)
+          </a>
+        </div>
+
+        <!-- Tombol Kembali ke Beranda -->
+        <div style="text-align: center; margin-top: 50px;">
+          <button class="tombol-aksi" onclick="window.location.href='index.html'">Kembali ke Beranda</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BAGIAN FOOTER -->
+    <footer class="bagian-footer">
+      <p>&copy; 2026 Jejak Langkah & Logika. Hak Cipta Dilindungi.</p>
+    </footer>
+
+  </body>
+</html>
